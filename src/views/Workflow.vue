@@ -1,1 +1,117 @@
-<template></template>
+<template>
+  <div class="workflow-page">
+    <NPageHeader title="工作流管理" subtitle="创建并管理你的AI工作流" >
+      <template #extra>
+        <NButton type="primary" @click="openCreateModal">新建工作流</NButton>
+      </template>
+    </NPageHeader>
+    <NEmpty v-if="workflowStore.workflows.length === 0" description="还没有工作流，先创建一个吧" class="empty-state" />
+
+    <NGrid v-else cols="1 s:2 m:2 l:3" :x-gap="16" :y-gap="16" responsive="screen">
+      <NGridItem v-for="workflow in workflowStore.workflows" :key="workflow.id">
+        <WorkflowCard :workflow="workflow" @run="handleRun" @toggle-favorite="workflowStore.toggleFavorite"
+          @remove="workflowStore.removeWorkflow" />
+      </NGridItem>
+    </NGrid>
+
+
+    <NModal v-model:show="showCreateModal" preset="card" title="新建工作流" style="width: min(560px,calc(100vw - 32px));">
+      <NForm ref="formRef" :model="formValue" :rules="createRules">
+        <NFormItem label="名称" path="name">
+          <NInput v-model:value="formValue.name" placeholder="例如: 前端代码审查助手" />
+        </NFormItem>
+
+        <NFormItem label="分类">
+          <NSelect v-model:value="formValue.category" :options="categoryOptions" />
+        </NFormItem>
+        <NFormItem label="描述" path="description">
+          <NInput v-model:value="formValue.description" type="textarea" :autosize="{minRows:2,maxRows:4}" placeholder="请输入工作流描述" />
+        </NFormItem>
+
+        <NFormItem label="提示词" path="prompt">
+          <NInput v-model:value="formValue.prompt" type="textarea" :autosize="{minRows:3,maxRows:6}" placeholder="请输入提示词" />
+
+        </NFormItem>
+        <NButton type="primary" block @click="handleCreate">创建工作流</NButton>
+      </NForm>
+
+    </NModal>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { type WorkflowDraft,useWorkflowStore } from '@/stores/workflow';
+import { useRouter } from 'vue-router';
+import WorkflowCard from '@/components/WorkflowCard.vue';
+import { type FormRules,type FormInst, NButton, NEmpty, NGrid, NGridItem, NModal, NPageHeader, NForm, NFormItem, NInput, NSelect } from 'naive-ui';
+import { reactive, ref } from 'vue';
+
+const workflowStore = useWorkflowStore();
+const router = useRouter();
+const showCreateModal = ref(false);
+const formRef = ref<FormInst | null>(null);
+
+const formValue = reactive<WorkflowDraft>({
+  name: '',
+  description: '',
+  category: '代码开发',
+  prompt: '',
+})
+
+const categoryOptions = [
+  { label: '代码开发', value: '代码开发' },
+  { label: '文档处理', value: '文档处理' },
+  { label: '学习辅助', value: '学习辅助' },
+]
+
+// 表单验证规则
+const createRules: FormRules = {
+  name: [{ required: true, message: '请输入工作流名称', trigger: 'blur' }],
+  description: [
+    { required: true, message: '请输入工作流描述', trigger: 'blur' },
+  ],
+  prompt: [{ required: true, message: '请输入提示词', trigger: 'blur' }],
+}
+
+
+function handleRun(id: string): void {
+  void router.push({ name: 'Chat', query: { workflowId: id } })
+}
+
+
+// 打开创建工作流的弹窗
+function openCreateModal(): void {
+  Object.assign(formValue,{
+    name:'',
+    description:'',
+    category:'代码开发',
+    prompt:''
+  })
+
+  showCreateModal.value = true;
+}
+
+async function handleCreate(): Promise<void> {
+  await formRef.value?.validate()
+
+  workflowStore.createWorkflow({ ...formValue })
+  showCreateModal.value = false
+}
+
+
+
+</script>
+
+
+
+<style scoped>
+.workflow-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.empty-state {
+  padding: 64px 0;
+}
+</style>
