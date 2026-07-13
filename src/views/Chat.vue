@@ -52,7 +52,7 @@ import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import ChatBox from '@/components/ChatBox.vue';
 import MessageItem from '@/components/MessageItem.vue';
-import { NButton, NEmpty, NSpin,NVirtualList } from 'naive-ui';
+import { NButton, NEmpty, NSpin, NVirtualList } from 'naive-ui';
 
 const route = useRoute()
 const chatStore = useChatStore()
@@ -164,6 +164,7 @@ function handleSend(content: string): void {
     border-radius: 0;
   }
 }
+
 .session-list {
   height: calc(100% - 65px);
 }
