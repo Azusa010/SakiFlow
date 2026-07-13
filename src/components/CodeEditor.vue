@@ -5,9 +5,7 @@
 
 <script lang="ts" setup>
 import * as monaco from 'monaco-editor'
-import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -15,8 +13,6 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 // 为Monaco 的不同语言能力提供对应的Web Worker
 self.MonacoEnvironment = {
   getWorker(_workerId: string, label: string): Worker {
-    if (label === 'json') return new JsonWorker()
-    if (label === 'css' || label === 'scss' || label === 'less') return new CssWorker()
     if (label === 'html' || label === 'handlebars' || label === 'razor') return new HtmlWorker()
     if (label === 'typescript' || label === 'javascript') return new TsWorker()
     return new EditorWorker()
@@ -75,7 +71,7 @@ onMounted(() => {
   createEditor()
 })
 
-async function formatDocument():Promise<void> {
+async function formatDocument(): Promise<void> {
   await editor?.getAction('editor.action.formatDocument')?.run()
 }
 defineExpose({
@@ -100,7 +96,7 @@ watch(() => props.readonly, (readonly) => {
   editor?.updateOptions({ readOnly: readonly })
 })
 
-watch(()=>props.theme,(theme)=>{
+watch(() => props.theme, (theme) => {
   monaco.editor.setTheme(theme)
 })
 

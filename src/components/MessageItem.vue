@@ -35,9 +35,21 @@ import { CopyOutline, RefreshOutline } from '@vicons/ionicons5';
 import { NAvatar, NButton, NIcon } from 'naive-ui';
 import { computed } from 'vue';
 import DOMPurify from 'dompurify';
-import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/core';
 import 'highlight.js/styles/github-dark.css';
 import MarkdownIt from 'markdown-it';
+import javascript from 'highlight.js/lib/languages/javascript'
+import typescript from 'highlight.js/lib/languages/typescript'
+import xml from 'highlight.js/lib/languages/xml'
+import css from 'highlight.js/lib/languages/css'
+import json from 'highlight.js/lib/languages/json'
+
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('typescript', typescript)
+hljs.registerLanguage('xml', xml)
+hljs.registerLanguage('vue', xml)
+hljs.registerLanguage('css', css)
+hljs.registerLanguage('json', json)
 
 
 interface MessageItemProps {

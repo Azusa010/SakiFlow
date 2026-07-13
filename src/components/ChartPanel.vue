@@ -3,7 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import * as echarts from 'echarts';
+import {init,use,type ECharts} from 'echarts/core';
+import { LineChart } from 'echarts/charts';
+import { GridComponent, TooltipComponent } from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
 import { onBeforeUnmount, onMounted, watch, ref } from 'vue';
 
 interface ChartPanelProps {
@@ -18,10 +21,17 @@ const props = withDefaults(defineProps<ChartPanelProps>(), {
   seriesName: '使用次数'
 })
 
+use([
+  LineChart,
+  GridComponent,
+  TooltipComponent,
+  CanvasRenderer
+])
+
 // ECharts 挂载节点
 const chartContainer = ref<HTMLElement | null>(null)
 
-let chart: echarts.ECharts | null = null
+let chart: ECharts | null = null
 
 let resizeObserver: ResizeObserver | null = null
 
@@ -92,7 +102,7 @@ onMounted(() => {
   const container = chartContainer.value
   if (!container) return
 
-  chart = echarts.init(container)
+  chart = init(container)
   renderChart()
 
   resizeObserver = new ResizeObserver(() => {
