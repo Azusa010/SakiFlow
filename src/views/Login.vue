@@ -130,4 +130,13 @@ async function handleSubmit(): Promise<void> {
     padding: 28px 24px;
   }
 }
+
+.register-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  color: #64748b;
+  font-size: 14px;
+}
 </style>

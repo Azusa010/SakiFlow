@@ -33,6 +33,10 @@
       </NGridItem>
     </NGrid>
 
+    <NCard title="近 7 天 AI 使用趋势">
+      <ChartPanel :labels="trendLabels" :values="trendValues" series-name="AI 调用次数" />
+    </NCard>
+
     <NGrid class="statistics-content" cols="1 m:2" x-gap="16" y-gap="16">
       <NGridItem>
         <NCard title="工作流使用排行">
@@ -101,10 +105,14 @@ import {
 import { useChatStore } from '@/stores/chat'
 import { useFileStore } from '@/stores/file'
 import { useWorkflowStore } from '@/stores/workflow'
+import ChartPanel from '@/components/ChartPanel.vue'
 
 const workflowStore = useWorkflowStore()
 const chatStore = useChatStore()
 const fileStore = useFileStore()
+
+const trendLabels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+const trendValues = [12, 18, 14, 21, 16, 25, 30]
 
 const totalWorkflowRuns = computed(() => {
   return workflowStore.workflows.reduce((total, workflow) => {

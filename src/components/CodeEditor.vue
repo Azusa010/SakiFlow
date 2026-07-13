@@ -71,6 +71,7 @@ function createEditor() {
 
 onMounted(() => {
   createEditor()
+  editor = null
 })
 
 async function formatDocument():Promise<void> {
