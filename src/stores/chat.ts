@@ -35,6 +35,33 @@ export const useChatStore = defineStore('chat', () => {
   // 当前会话消息
   const activeMessages = computed(() => activeSession.value?.messages ?? [])
 
+  // 等待指令时前
+  function sleep(delay: number): Promise<void> {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, delay)
+    })
+  }
+
+  async function streamAIReplay(session: ChatSession, reply: string): Promise<void> {
+    const AIMessage: ChatMessage = {
+      id: `message-${Date.now()}-assistant`,
+      role: 'assistant',
+      content: '',
+      createdAt: '刚刚',
+    }
+    session.messages.push(AIMessage)
+
+    const reactiveAImessage = session.messages.at(-1)
+    if(!reactiveAImessage) return
+
+    for (let index = 0; index < reply.length; index+=2) {
+      await sleep(45)
+      reactiveAImessage.content += reply.slice(index, index + 2)
+    }
+
+    session.updatedAt = '刚刚'
+  }
+
   // 创建会话并切换为当前会话
   function createSession(workflowId?: string): ChatSession {
     const session: ChatSession = {
@@ -77,17 +104,7 @@ export const useChatStore = defineStore('chat', () => {
     try {
       session.messages.pop()
 
-      await new Promise<void>((res) => {
-        window.setTimeout(res, 600)
-      })
-      session.messages.push({
-        id: `message-${Date.now()}-assistant`,
-        role: 'assistant',
-        content: `这是对"${previousUserMessage.content}"重新生成的回复`,
-        createdAt: '刚刚',
-      })
-
-      session.updatedAt = '刚刚'
+      await streamAIReplay(session, `这是对「${previousUserMessage.content}」重新生成的回复。`)
     } finally {
       isGenerating.value = false
     }
@@ -111,18 +128,14 @@ export const useChatStore = defineStore('chat', () => {
     session.updatedAt = '刚刚'
     isGenerating.value = true
 
-    await new Promise<void>((resolve) => {
-      window.setTimeout(resolve, 600)
-    })
-
-    session.messages.push({
-      id: `message-${Date.now()}-assistant`,
-      role: 'assistant',
-      content: `这是对"${messageContent}"的回复`,
-      createdAt: '刚刚',
-    })
-
-    isGenerating.value = false
+    try {
+      await streamAIReplay(
+        session,
+        `这是对「${messageContent}」的回复。\n\n\`\`\`ts\nconst workflow = 'SakiFlow'\nconsole.log(workflow)\n\`\`\``,
+      )
+    } finally {
+      isGenerating.value = false
+    }
   }
 
   return {

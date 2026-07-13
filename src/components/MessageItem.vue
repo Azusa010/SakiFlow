@@ -5,7 +5,8 @@
     </NAvatar>
 
     <div class="message-body">
-      <div class="message-content">{{ message.content }}</div>
+      <div v-if="isUser" class="message-content">{{ message.content }}</div>
+      <div v-else class="message-content message-content--markdown" v-html="renderedContent"></div>
 
       <div class="message-meta">
         <span>{{ message.createdAt }}</span>
@@ -33,7 +34,10 @@ import type { ChatMessage } from '@/stores/chat';
 import { CopyOutline, RefreshOutline } from '@vicons/ionicons5';
 import { NAvatar, NButton, NIcon } from 'naive-ui';
 import { computed } from 'vue';
-
+import DOMPurify from 'dompurify';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
+import MarkdownIt from 'markdown-it';
 
 
 interface MessageItemProps {
@@ -49,6 +53,32 @@ const emit = defineEmits<{
 const props = defineProps<MessageItemProps>()
 
 const isUser = computed(() => props.message.role === 'user')
+
+//  转义未指定语言的代码块，防止代码中的 HTML 被当作标签执行。
+function escapeHtml(code: string): string {
+  return code.replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;')
+}
+
+const markdown = new MarkdownIt({
+  html: false,
+  breaks: true,
+  linkify: true,
+  highlight(code: string, language: string): string {
+    const isSupportedLanguage = language && hljs.getLanguage(language)
+    const highlightedCode = isSupportedLanguage
+      ? hljs.highlight(code, { language }).value
+      : escapeHtml(code)
+    return `<pre><code class="hljs language-${language}">${highlightedCode}</code></pre>`
+  },
+})
+
+const renderedContent = computed(()=>{
+  return DOMPurify.sanitize(markdown.render(props.message.content))
+})
 
 // 将当前消息内容复制到系统剪贴板
 async function copyMessage(): Promise<void> {
@@ -102,5 +132,64 @@ async function copyMessage(): Promise<void> {
 
 .message-row--user .message-meta {
   justify-content: flex-end;
+}
+
+.message-content--markdown {
+  white-space: normal;
+}
+
+:deep(.message-content--markdown > :first-child) {
+  margin-top: 0;
+}
+
+:deep(.message-content--markdown > :last-child) {
+  margin-bottom: 0;
+}
+
+:deep(.message-content--markdown h1),
+:deep(.message-content--markdown h2),
+:deep(.message-content--markdown h3) {
+  margin: 16px 0 8px;
+  line-height: 1.35;
+}
+
+:deep(.message-content--markdown p),
+:deep(.message-content--markdown ul),
+:deep(.message-content--markdown ol) {
+  margin: 8px 0;
+}
+
+:deep(.message-content--markdown ul),
+:deep(.message-content--markdown ol) {
+  padding-left: 22px;
+}
+
+:deep(.message-content--markdown code) {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #e2e8f0;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+:deep(.message-content--markdown pre) {
+  overflow-x: auto;
+  margin: 12px 0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+:deep(.message-content--markdown pre code) {
+  display: block;
+  padding: 14px;
+  background: transparent;
+  line-height: 1.6;
+}
+
+:deep(.message-content--markdown blockquote) {
+  margin: 10px 0;
+  padding-left: 12px;
+  border-left: 3px solid #94a3b8;
+  color: #64748b;
 }
 </style>

@@ -15,35 +15,49 @@
 
       <div class="editor-toolbar">
         <div class="toolbar-actions">
-          <NButton type="primary" :loading="isProcessing" :disabled="!content.trim() || isProcessing"
-            @click="handleAiAction('polish')">
-            AI 润色
+          <NSelect v-model:value="language" :options="languageOptions" style="width: 140px;" />
+
+          <NButton :disabled="!content.trim()" @click="handleFormat">
+            格式化代码
           </NButton>
 
-          <NButton :loading="isProcessing" :disabled="!content.trim() || isProcessing" @click="handleAiAction('summary')">
-            生成摘要</NButton>
+          <NButton type="primary" :loading="isProcessing" :disabled="!content.trim()||isProcessing" @click="handleAiAction('polish')">
+            AI 优化
+          </NButton>
 
-
+          <NButton :loading="isProcessing" :disabled="isProcessing||!content.trim()" @click="handleAiAction('summary')">
+            AI 摘要
+          </NButton>
         </div>
-
         <NButton text type="error" :disabled="!content.trim()" @click="handleClear">
           清空正文
         </NButton>
       </div>
 
-      <NInput v-model:value="content" type="textarea" placeholder="请编写内容..." :autosize="{ minRows: 16 }" />
+      <CodeEditor ref="codeEditorRef" v-model="content" :language="language" height="480px" />
     </NCard>
   </div>
 
 </template>
 
 <script setup lang="ts">
-import { NButton, NCard, NDivider, NInput } from 'naive-ui'
+import { NButton, NCard, NDivider, NInput, NSelect } from 'naive-ui'
 import { computed, ref } from 'vue'
+import CodeEditor from '@/components/CodeEditor.vue'
 
 const title = ref('未命名文档')
 
 const content = ref('')
+
+const language = ref('typescript')
+
+const languageOptions = [
+  { label: 'TypeScript', value: 'typescript' },
+  { label: 'JavaScript', value: 'javascript' },
+  { label: 'Vue', value: 'html' },
+]
+
+const codeEditorRef = ref<InstanceType<typeof CodeEditor> | null>(null)
 
 const wordCount = computed(() => {
   return content.value.replace(/\s/g, '').length
@@ -73,6 +87,11 @@ async function handleAiAction(action: AiAction) {
 
   isProcessing.value = false
 }
+
+function handleFormat(){
+  void codeEditorRef.value?.formatDocument()
+}
+
 
 function handleClear(): void {
   content.value = ''
