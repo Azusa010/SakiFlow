@@ -71,7 +71,7 @@
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { type FormInst, NAlert, NCard, NForm, type FormRules, NFormItem, NInput, NButton, NSelect } from 'naive-ui';
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { useSettingsStore, type AppPreferences } from '@/stores/settings';
 
 interface ProfileForm {
@@ -151,7 +151,10 @@ function handleSavePreferences(): void {
 function handleExport(): void {
   const exportContent = JSON.stringify({
     profile: userStore.userInfo,
-    preferences: settingsStore.preferences
+    preferences: {
+      theme: preferencesForm.theme,
+      model: preferencesForm.model,
+    }
   },
     null,
     2,
@@ -172,6 +175,9 @@ async function handleLogout(): Promise<void> {
   userStore.logout()
   await router.replace('/login')
 }
+watch(() => preferencesForm.theme, (theme) => {
+  settingsStore.updatePreferences({ theme })
+})
 </script>
 <style scoped>
 .settings-page {
@@ -188,7 +194,7 @@ async function handleLogout(): Promise<void> {
 
 .page-header p {
   margin: 8px 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .profile-form {
@@ -211,12 +217,12 @@ async function handleLogout(): Promise<void> {
 }
 
 .logout-content strong {
-  color: #334155;
+  color: var(--text-primary);
 }
 
 .logout-content p {
   margin: 8px 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 

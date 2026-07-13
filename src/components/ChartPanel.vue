@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts';
-import { onBeforeUnmount, onMounted, watch,ref } from 'vue';
+import { onBeforeUnmount, onMounted, watch, ref } from 'vue';
 
 interface ChartPanelProps {
   // 横轴标签
@@ -25,13 +25,25 @@ let chart: echarts.ECharts | null = null
 
 let resizeObserver: ResizeObserver | null = null
 
+let themeObserver: MutationObserver | null = null
+
 function renderChart(): void {
   if (!chart) return
+  const rootStyles = getComputedStyle(document.documentElement)
+  const textColor = rootStyles.getPropertyValue('--text-secondary').trim()
+  const primaryTextColor = rootStyles.getPropertyValue('--text-primary').trim()
+  const borderColor = rootStyles.getPropertyValue('--border-color').trim()
+  const surfaceColor = rootStyles.getPropertyValue('--surface-color').trim()
   chart.setOption(
     {
       color: ['#2563eb'],
       tooltip: {
-        trigger: 'axis'
+        trigger: 'axis',
+        backgroundColor: surfaceColor,
+        borderColor,
+        textStyle: {
+          color: primaryTextColor,
+        },
       },
       grid: {
         top: 24,
@@ -44,20 +56,20 @@ function renderChart(): void {
         boundaryGap: false,
         data: props.labels,
         axisLine: {
-          lineStyle: { color: '#cbd5e1' }
+          lineStyle: { color: borderColor }
         },
         axisLabel: {
-          color: '#64748b'
+          color: textColor,
         }
       },
       yAxis: {
         type: 'value',
         minInterval: 1,
         splitLine: {
-          lineStyle: { color: '#e2e8f0' },
+          lineStyle: { color: borderColor },
         },
         axisLabel: {
-          color: '#64748b',
+          color: textColor,
         },
       },
       series: [
@@ -76,27 +88,37 @@ function renderChart(): void {
   )
 }
 
-onMounted(()=>{
+onMounted(() => {
   const container = chartContainer.value
-  if(!container) return
+  if (!container) return
 
   chart = echarts.init(container)
   renderChart()
 
-  resizeObserver = new ResizeObserver(()=>{
+  resizeObserver = new ResizeObserver(() => {
     chart?.resize()
   })
 
   resizeObserver.observe(container)
+
+  themeObserver = new MutationObserver(()=>{
+    renderChart()
+  })
+
+  themeObserver.observe(document.documentElement,{
+    attributes: true,
+    attributeFilter: ['data-theme']
+  })
 })
 
 
-watch(()=>[props.labels,props.values],()=>{
+watch(() => [props.labels, props.values], () => {
   renderChart()
-},{deep:true})
+}, { deep: true })
 
-onBeforeUnmount(()=>{
+onBeforeUnmount(() => {
   resizeObserver?.disconnect()
+  themeObserver?.disconnect()
   chart?.dispose()
   chart = null
 })

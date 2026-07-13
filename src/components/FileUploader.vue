@@ -27,7 +27,7 @@ function isSupportedFile(file: File): boolean {
 }
 
 // 提取 Naive UI 上传对象中的原生文件，并通知父页面写入 Store。
-function handleChange(options: { file: UploadFileInfo }) {
+function handleChange(options: { file: UploadFileInfo }):void {
   const rawFile = options.file.file
 
   if (rawFile && isSupportedFile(rawFile)) {
@@ -43,13 +43,13 @@ function handleChange(options: { file: UploadFileInfo }) {
 
 .upload-title {
   margin: 12px 0 6px;
-  color: #334155;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .upload-description {
   margin: 0;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 13px;
 }
 </style>

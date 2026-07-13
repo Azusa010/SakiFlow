@@ -41,22 +41,22 @@ const emit = defineEmits < {
 } > ()
 
 // 通知父页面运行当前工作流
-function emitRun(){
+function emitRun():void{
   emit('run', props.workflow.id);
 }
 
 // 通知父页面编辑当前工作流
-function emitEdit(){
+function emitEdit():void{
   emit('edit', props.workflow.id);
 }
 
 // 通知父页面切换当前工作流的收藏状态
-function emitToggleFavorite(){
+function emitToggleFavorite():void{
   emit('toggle-favorite', props.workflow.id);
 }
 
 // 通知父页面删除当前工作流
-function emitRemove(){
+function emitRemove():void{
   emit('remove', props.workflow.id);
 }
 </script>
@@ -70,7 +70,7 @@ function emitRemove(){
 .workflow-description {
   min-height: 44px;
   margin: 0;
-  color: #64748b;
+color: var(--text-secondary);
   line-height: 1.6;
 }
 
@@ -83,7 +83,7 @@ function emitRemove(){
 
 .workflow-meta {
   margin-top: 18px;
-  color: #94a3b8;
+color: var(--text-muted);
   font-size: 13px;
 }
 

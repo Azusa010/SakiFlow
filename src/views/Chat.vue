@@ -25,7 +25,10 @@
     <section class="chat-main">
       <header class="chat-header">{{ chatStore.activeSession?.title ?? 'AI 聊天' }}</header>
       <div v-if="chatStore.activeMessages.length" class="message-list">
-        <MessageItem v-for="(message, index) in chatStore.activeMessages" :key="message.id" :message="message"  :is-regenerating="chatStore.isGenerating" :can-regenerate="message.role==='assistant'&&index===chatStore.activeMessages.length-1&&!chatStore.isGenerating" @regenerate="chatStore.regenerateLastAnswer"/>
+        <MessageItem v-for="(message, index) in chatStore.activeMessages" :key="message.id" :message="message"
+          :is-regenerating="chatStore.isGenerating"
+          :can-regenerate="message.role === 'assistant' && index === chatStore.activeMessages.length - 1 && !chatStore.isGenerating"
+          @regenerate="chatStore.regenerateLastAnswer" />
         <NSpin v-if="chatStore.isGenerating" size="small">AI 正在思考...</NSpin>
       </div>
 
@@ -67,16 +70,16 @@ function handleSend(content: string): void {
   height: calc(100vh - 112px);
   min-height: 560px;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--surface-color);
 }
 
 .session-sidebar {
   width: 260px;
   flex: 0 0 260px;
   overflow-y: auto;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid var(--border-color);
 }
 
 .session-sidebar-header,
@@ -89,17 +92,17 @@ function handleSend(content: string): void {
 
 .session-sidebar-header {
   padding: 16px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .session-item p {
   margin: 4px 0 0;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
 .session-item--active {
-  background: #eff6ff;
+  background: var(--primary-soft);
 }
 
 .session-empty {
@@ -115,7 +118,7 @@ function handleSend(content: string): void {
 
 .chat-header {
   padding: 17px 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
   font-weight: 600;
 }
 

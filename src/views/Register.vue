@@ -55,10 +55,10 @@ interface RegisterForm {
 
 const router = useRouter()
 const userStore = useUserStore()
-const formRef = ref < FormInst | null > (null)
+const formRef = ref<FormInst | null>(null)
 const isSubmitting = ref(false)
 
-const formValue = reactive < RegisterForm > ({
+const formValue = reactive<RegisterForm>({
   username: '',
   email: '',
   password: '',
@@ -149,8 +149,12 @@ async function handleSubmit(): Promise<void> {
   place-items: center;
   padding: 24px;
   background:
-    radial-gradient(circle at top right, #dbeafe, transparent 38%),
-    linear-gradient(135deg, #f8fafc, #eef2ff);
+    radial-gradient(circle at top left,
+      rgba(37, 99, 235, 0.18),
+      transparent 38%),
+    linear-gradient(135deg,
+      var(--surface-muted),
+      var(--app-bg));
 }
 
 .register-card {
@@ -176,7 +180,7 @@ async function handleSubmit(): Promise<void> {
 
 .register-heading p {
   margin: 0;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .login-link {
@@ -184,7 +188,7 @@ async function handleSubmit(): Promise<void> {
   align-items: center;
   justify-content: center;
   margin-top: 18px;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 

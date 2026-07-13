@@ -74,7 +74,8 @@
                 {{ fileStore.selectedFile.previewContent }}
               </pre>
 
-              <iframe v-else-if="fileStore.selectedFile.previewKind==='pdf'" class="pdf-preview" :src="fileStore.selectedFile.previewUrl" :title="`${fileStore.selectedFile.name} 预览`"></iframe>
+              <iframe v-else-if="fileStore.selectedFile.previewKind === 'pdf'" class="pdf-preview"
+                :src="fileStore.selectedFile.previewUrl" :title="`${fileStore.selectedFile.name} 预览`"></iframe>
 
               <NEmpty v-else size="small" description="暂不支持预览此类型文件"> </NEmpty>
             </div>
@@ -151,7 +152,7 @@ function handleAnalyze(id: string): void {
 
 .page-header p {
   margin: 8px 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .files-content {
@@ -164,7 +165,7 @@ function handleAnalyze(id: string): void {
 }
 
 .file-list-item.active {
-  background: #eff6ff;
+  background: var(--primary-soft);
 }
 
 .file-item-content,
@@ -194,7 +195,7 @@ function handleAnalyze(id: string): void {
 }
 
 .file-item-main span {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -212,11 +213,11 @@ function handleAnalyze(id: string): void {
 .detail-row {
   justify-content: space-between;
   gap: 16px;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .detail-row strong {
-  color: #334155;
+  color: var(--text-primary);
   text-align: right;
   word-break: break-all;
 }
@@ -232,7 +233,7 @@ function handleAnalyze(id: string): void {
 
 .file-preview h3 {
   margin: 0 0 10px;
-  color: #334155;
+  color: var(--text-primary);
   font-size: 15px;
 }
 
@@ -242,8 +243,8 @@ function handleAnalyze(id: string): void {
   overflow: auto;
   padding: 14px;
   border-radius: 8px;
-  background: #f8fafc;
-  color: #334155;
+  background: var(--surface-muted);
+  color: var(--text-primary);
   font: 13px/1.7 Consolas, 'Courier New', monospace;
   white-space: pre-wrap;
   word-break: break-word;
@@ -253,7 +254,7 @@ function handleAnalyze(id: string): void {
   display: block;
   width: 100%;
   height: 360px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
 }
 </style>

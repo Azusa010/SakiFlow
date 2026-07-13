@@ -42,6 +42,7 @@ export const useChatStore = defineStore('chat', () => {
     })
   }
 
+  // 模拟 AI 回复的流式输出
   async function streamAIReplay(session: ChatSession, reply: string): Promise<void> {
     const AIMessage: ChatMessage = {
       id: `message-${Date.now()}-assistant`,

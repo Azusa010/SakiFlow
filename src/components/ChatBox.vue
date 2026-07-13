@@ -46,8 +46,8 @@ function handleSend(): void {
 <style scoped>
 .chat-box {
   padding: 16px;
-  border-top: 1px solid #e2e8f0;
-  background: #ffffff;
+  border-top: 1px solid var(--border-color);
+  background: var(--surface-color);
 }
 
 .chat-box-footer {
@@ -56,7 +56,7 @@ function handleSend(): void {
   justify-content: space-between;
   gap: 12px;
   margin-top: 10px;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 12px;
 }
 </style>

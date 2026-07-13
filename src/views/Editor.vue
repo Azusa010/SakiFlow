@@ -34,7 +34,7 @@
         </NButton>
       </div>
 
-      <CodeEditor ref="codeEditorRef" v-model="content" :language="language" height="480px" />
+      <CodeEditor ref="codeEditorRef" v-model="content" :language="language" height="480px" :theme="editorTheme"  />
     </NCard>
   </div>
 
@@ -44,6 +44,18 @@
 import { NButton, NCard, NDivider, NInput, NSelect } from 'naive-ui'
 import { computed, ref } from 'vue'
 import CodeEditor from '@/components/CodeEditor.vue'
+import { useSettingsStore } from '@/stores/settings'
+import { usePreferredDark } from '@vueuse/core'
+
+const settingsStore = useSettingsStore()
+const prefersDark = usePreferredDark()
+
+const editorTheme = computed<'vs'|'vs-dark'>(()=>{
+  const selectedTheme = settingsStore.preferences.theme
+  const isDark = selectedTheme === 'dark' || (selectedTheme === 'system' && prefersDark.value)
+
+  return isDark ? 'vs-dark' : 'vs'
+})
 
 const title = ref('未命名文档')
 
@@ -67,7 +79,7 @@ const isProcessing = ref(false)
 
 type AiAction = 'polish' | 'summary'
 
-async function handleAiAction(action: AiAction) {
+async function handleAiAction(action: AiAction):Promise<void> {
   const currentContent = content.value.trim()
   if (!currentContent || isProcessing.value) {
     return
@@ -80,15 +92,15 @@ async function handleAiAction(action: AiAction) {
   })
 
   if (action === 'polish') {
-    content.value = `【AI 润色版】\n${currentContent}`
+    content.value = `//【AI 优化版】\n${currentContent}`
   } else {
-    content.value = `${currentContent}\n\n---\nAI 摘要: 这段内容已完成核心信息提取，可继续结合具体场景补充细节。`
+    content.value = `${currentContent}\n\n/**---\nAI 摘要: 这段内容已完成核心信息提取，可继续结合具体场景补充细节。*/`
   }
 
   isProcessing.value = false
 }
 
-function handleFormat(){
+function handleFormat():void{
   void codeEditorRef.value?.formatDocument()
 }
 
@@ -119,11 +131,11 @@ function handleClear(): void {
 
 .page-header p {
   margin: 8px 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .word-count {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 13px;
   white-space: nowrap;
 }

@@ -28,12 +28,14 @@ interface CodeEditorProps {
   language?: string
   readonly?: boolean
   height?: string
+  theme?: 'vs' | 'vs-dark'
 }
 
 const props = withDefaults(defineProps<CodeEditorProps>(), {
   language: 'typescript',
   readonly: false,
-  height: '480px'
+  height: '480px',
+  theme: 'vs'
 })
 
 
@@ -54,7 +56,7 @@ function createEditor() {
   editor = monaco.editor.create(editorContainer.value, {
     value: props.modelValue,
     language: props.language,
-    theme: 'vs',
+    theme: props.theme,
     readOnly: props.readonly,
     automaticLayout: true,
     minimap: { enabled: false },
@@ -71,7 +73,6 @@ function createEditor() {
 
 onMounted(() => {
   createEditor()
-  editor = null
 })
 
 async function formatDocument():Promise<void> {
@@ -99,14 +100,21 @@ watch(() => props.readonly, (readonly) => {
   editor?.updateOptions({ readOnly: readonly })
 })
 
+watch(()=>props.theme,(theme)=>{
+  monaco.editor.setTheme(theme)
+})
+
 onBeforeUnmount(() => {
   editor?.dispose()
 })
+
+
+
 </script>
 <style scoped>
 .code-editor {
   overflow: hidden;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
 }
 </style>

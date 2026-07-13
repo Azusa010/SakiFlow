@@ -91,8 +91,12 @@ async function handleSubmit(): Promise<void> {
   place-items: center;
   padding: 24px;
   background:
-    radial-gradient(circle at top left, #dbeafe, transparent 38%),
-    linear-gradient(135deg, #f8fafc, #eef2ff);
+    radial-gradient(circle at top left,
+      rgba(37, 99, 235, 0.18),
+      transparent 38%),
+    linear-gradient(135deg,
+      var(--surface-muted),
+      var(--app-bg));
 }
 
 .login-card {
@@ -118,7 +122,7 @@ async function handleSubmit(): Promise<void> {
 
 .login-heading p {
   margin: 0;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 480px) {
@@ -136,7 +140,7 @@ async function handleSubmit(): Promise<void> {
   align-items: center;
   justify-content: center;
   margin-top: 18px;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 </style>

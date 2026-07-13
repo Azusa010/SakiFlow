@@ -119,7 +119,7 @@ const recentTasks: RecentTask[] = [
 
 .metric-description {
   margin-top: 10px;
-  color: #909399;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
@@ -136,7 +136,7 @@ const recentTasks: RecentTask[] = [
 
 .task-row p {
   margin-top: 6px;
-  color: #909399;
+  color: var(--text-muted);
   font-size: 13px;
 }
 </style>

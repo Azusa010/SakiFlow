@@ -36,7 +36,7 @@ import { NAvatar, NButton, NIcon } from 'naive-ui';
 import { computed } from 'vue';
 import DOMPurify from 'dompurify';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github.css';
+import 'highlight.js/styles/github-dark.css';
 import MarkdownIt from 'markdown-it';
 
 
@@ -110,8 +110,8 @@ async function copyMessage(): Promise<void> {
 .message-content {
   padding: 12px 14px;
   border-radius: 12px;
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--surface-muted);
+  color: var(--text-primary);
   line-height: 1.7;
   white-space: pre-wrap;
 }
@@ -126,7 +126,7 @@ async function copyMessage(): Promise<void> {
   align-items: center;
   gap: 8px;
   margin-top: 4px;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -167,7 +167,7 @@ async function copyMessage(): Promise<void> {
 :deep(.message-content--markdown code) {
   padding: 2px 5px;
   border-radius: 4px;
-  background: #e2e8f0;
+  background: var(--border-color);
   font-family: Consolas, 'Courier New', monospace;
   font-size: 0.9em;
 }
@@ -176,7 +176,7 @@ async function copyMessage(): Promise<void> {
   overflow-x: auto;
   margin: 12px 0;
   border-radius: 8px;
-  background: #f8fafc;
+  background: #0d1117;
 }
 
 :deep(.message-content--markdown pre code) {
@@ -189,7 +189,7 @@ async function copyMessage(): Promise<void> {
 :deep(.message-content--markdown blockquote) {
   margin: 10px 0;
   padding-left: 12px;
-  border-left: 3px solid #94a3b8;
-  color: #64748b;
+  border-left: 3px solid var(--text-muted);
+  color: var(--text-secondary);
 }
 </style>

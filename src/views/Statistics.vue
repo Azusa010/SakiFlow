@@ -155,7 +155,7 @@ const topWorkflows = computed(() => {
 
 .page-header p {
   margin: 8px 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .statistics-content {
@@ -185,25 +185,25 @@ const topWorkflows = computed(() => {
   height: 28px;
   place-items: center;
   border-radius: 50%;
-  background: #eff6ff;
+  background: var(--primary-soft);
   color: #2563eb;
   font-weight: 700;
 }
 
 .workflow-info strong {
-  color: #334155;
+  color: var(--text-primary);
 }
 
 .workflow-info p {
   margin: 5px 0 0;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
 .overview-item {
   padding: 14px 0;
-  border-bottom: 1px solid #f1f5f9;
-  color: #64748b;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
 }
 
 .overview-item:last-child {
@@ -211,6 +211,6 @@ const topWorkflows = computed(() => {
 }
 
 .overview-item strong {
-  color: #334155;
+  color: var(--text-primary);
 }
 </style>
