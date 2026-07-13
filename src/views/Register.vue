@@ -78,6 +78,11 @@ const registerRules: FormRules = {
       required: true,
       message: '请输入邮箱地址',
       trigger: ['input', 'blur']
+    },
+    {
+      type: 'email',
+      message: '请输入有效的邮箱地址',
+      trigger: ['input', 'blur']
     }
   ],
   password: [

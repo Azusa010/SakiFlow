@@ -76,6 +76,7 @@ const createRules: FormRules = {
 
 
 function handleRun(id: string): void {
+  workflowStore.runWorkflow(id)
   void router.push({ name: 'Chat', query: { workflowId: id } })
 }
 

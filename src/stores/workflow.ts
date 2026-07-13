@@ -85,6 +85,16 @@ export const useWorkflowStore = defineStore('workflow', () => {
     }
   }
 
+  // 记录一次工作流运行
+  function runWorkflow(id: string): void {
+    const workflow = workflows.value.find((w) => w.id === id)
+
+    if (!workflow) return
+
+    workflow.runCount += 1
+    workflow.updatedAt = '刚刚'
+  }
+
   function removeWorkflow(id: string): void {
     workflows.value = workflows.value.filter((workflow) => workflow.id !== id)
   }
@@ -96,5 +106,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
     updateWorkflow,
     toggleFavorite,
     removeWorkflow,
+    runWorkflow,
+    
   }
 })

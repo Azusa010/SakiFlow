@@ -17,7 +17,10 @@
 
         <NButton block type="primary" attr-type="submit" :loading="isSubmitting">登录</NButton>
       </NForm>
-
+      <div class="register-link">
+        没有账号?
+        <NButton text type="primary" @click="router.push('/register')">去注册</NButton>
+      </div>
     </NCard>
   </div>
 
