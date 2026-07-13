@@ -7,19 +7,25 @@
       </div>
 
       <NEmpty v-if="chatStore.sessions.length === 0" size="small" description="还没有对话" class="session-empty" />
-      <NList v-else hoverable clickable>
-        <NListItem v-for="session in chatStore.sessions" :key="session.id" @click="chatStore.selectSession(session.id)"
-          :class="{ 'session-item--active': session.id === chatStore.activeSessionId }">
-          <div class="session-item">
-            <div>
-              <strong>{{ session.title }}</strong>
-              <p>{{ session.updatedAt }}</p>
-            </div>
+      <NVirtualList v-else class="session-list" :items="virtualSessions" :item-size="64">
+        <template #default="{ item: session }">
+          <div :key="session.key" class="session-list-item" :class="{
+            'session-item--active':
+              session.id === chatStore.activeSessionId,
+          }" @click="chatStore.selectSession(session.id)">
+            <div class="session-item">
+              <div>
+                <strong>{{ session.title }}</strong>
+                <p>{{ session.updatedAt }}</p>
+              </div>
 
-            <NButton text type="error" size="tiny" @click.stop="chatStore.deleteSession(session.id)">删除</NButton>
+              <NButton text type="error" size="tiny" @click.stop="chatStore.deleteSession(session.id)">
+                删除
+              </NButton>
+            </div>
           </div>
-        </NListItem>
-      </NList>
+        </template>
+      </NVirtualList>
     </aside>
 
     <section class="chat-main">
@@ -41,15 +47,26 @@
 
 
 <script setup lang="ts">
-import { useChatStore } from '@/stores/chat';
-import { onMounted } from 'vue';
+import { useChatStore, type ChatSession } from '@/stores/chat';
+import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import ChatBox from '@/components/ChatBox.vue';
 import MessageItem from '@/components/MessageItem.vue';
-import { NButton, NEmpty, NList, NListItem, NSpin } from 'naive-ui';
+import { NButton, NEmpty, NSpin,NVirtualList } from 'naive-ui';
 
 const route = useRoute()
 const chatStore = useChatStore()
+// 悉尼列表使用的会话数
+type VirtualChatSession = ChatSession & { key: string }
+
+// 为绘画记录补充key
+const virtualSessions = computed<VirtualChatSession[]>(() => {
+  return chatStore.sessions.map((session) => ({
+    ...session,
+    key: session.id
+  }))
+})
+
 
 onMounted(() => {
   const workflowId = route.query.workflowId
@@ -146,5 +163,19 @@ function handleSend(content: string): void {
     border-left: 0;
     border-radius: 0;
   }
+}
+.session-list {
+  height: calc(100% - 65px);
+}
+
+.session-list-item {
+  box-sizing: border-box;
+  height: 64px;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+.session-list-item:hover {
+  background: var(--surface-muted);
 }
 </style>

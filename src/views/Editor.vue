@@ -21,18 +21,20 @@
             格式化代码
           </NButton>
 
-          <NButton type="primary" :loading="isProcessing" :disabled="!content.trim()||isProcessing" @click="handleAiAction('polish')">
+          <NButton type="primary" :loading="isProcessing" :disabled="!content.trim()||isProcessing" @click="handleAiAction('optimize')">
             AI 优化
           </NButton>
 
-          <NButton :loading="isProcessing" :disabled="isProcessing||!content.trim()" @click="handleAiAction('summary')">
-            AI 摘要
+          <NButton :loading="isProcessing" :disabled="isProcessing||!content.trim()" @click="handleAiAction('explain')">
+            AI 解释
           </NButton>
         </div>
         <NButton text type="error" :disabled="!content.trim()" @click="handleClear">
           清空正文
         </NButton>
       </div>
+
+      <NAlert v-if="processingError" class="processing-error" type="error" title="AI 处理失败">{{ processingError }}</NAlert>
 
       <CodeEditor ref="codeEditorRef" v-model="content" :language="language" height="480px" :theme="editorTheme"  />
     </NCard>
@@ -41,11 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import { NButton, NCard, NDivider, NInput, NSelect } from 'naive-ui'
+import { NAlert, NButton, NCard, NDivider, NInput, NSelect } from 'naive-ui'
 import { computed, ref } from 'vue'
 import CodeEditor from '@/components/CodeEditor.vue'
 import { useSettingsStore } from '@/stores/settings'
 import { usePreferredDark } from '@vueuse/core'
+import { useAsyncTask } from '@/composables/useAsyncTask'
 
 const settingsStore = useSettingsStore()
 const prefersDark = usePreferredDark()
@@ -75,29 +78,33 @@ const wordCount = computed(() => {
   return content.value.replace(/\s/g, '').length
 })
 
-const isProcessing = ref(false)
 
-type AiAction = 'polish' | 'summary'
+type AiAction = 'optimize' | 'explain'
 
-async function handleAiAction(action: AiAction):Promise<void> {
-  const currentContent = content.value.trim()
-  if (!currentContent || isProcessing.value) {
-    return
+async function requestAiAction(action:AiAction,sourceCode:string):Promise<string>{
+  await new Promise<void>(res=>window.setTimeout(res,600))
+
+  if (action === 'optimize') {
+    return `// 【AI 优化版】\n${sourceCode}`
   }
 
-  isProcessing.value = true
+  return `${sourceCode}\n\n/**\n * AI 解释：这段代码已完成结构分析，可继续结合具体业务补充执行流程说明。\n */`
+}
 
-  await new Promise < void> (res => {
-    window.setTimeout(res, 600);
-  })
+const {
+  isLoading: isProcessing,
+  error: processingError,
+  execute: executeAiAction,
+} = useAsyncTask(requestAiAction)
 
-  if (action === 'polish') {
-    content.value = `//【AI 优化版】\n${currentContent}`
-  } else {
-    content.value = `${currentContent}\n\n/**---\nAI 摘要: 这段内容已完成核心信息提取，可继续结合具体场景补充细节。*/`
+async function handleAiAction(action:AiAction):Promise<void>{
+  const currentContent = content.value
+  if(!currentContent || isProcessing.value) return
+
+  const result = await executeAiAction(action,currentContent)
+  if(result!==null){
+    content.value = result
   }
-
-  isProcessing.value = false
 }
 
 function handleFormat():void{

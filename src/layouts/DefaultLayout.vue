@@ -13,7 +13,12 @@
       </NLayoutHeader>
 
       <NLayoutContent content-style="padding: 24px">
-        <RouterView />
+        <!-- 缓存工作区页面 -->
+        <RouterView v-slot="{ Component }">
+          <KeepAlive>
+            <component :is="Component" />
+          </KeepAlive>
+        </RouterView>
       </NLayoutContent>
     </NLayout>
   </NLayout>
@@ -44,4 +49,3 @@ function handleMenuSelect(key: string | number): void {
   void router.push(String(key))
 }
 </script>
-
