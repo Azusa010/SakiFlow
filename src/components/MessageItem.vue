@@ -9,7 +9,11 @@
 
       <div class="message-meta">
         <span>{{ message.createdAt }}</span>
-        <NButton text size="tiny" @click="copyMessage">复制</NButton>
+        <NButton text size="tiny" @click="copyMessage"><NIcon><CopyOutline /></NIcon></NButton>
+
+        <NButton v-if="canRegenerate" text size="tiny" :disabled="isRegenerating" @click="emit('regenerate')"><NIcon>
+          <RefreshOutline />
+        </NIcon></NButton>
       </div>
     </div>
 
@@ -20,14 +24,21 @@
 
 <script setup lang="ts">
 import type { ChatMessage } from '@/stores/chat';
-import { NAvatar, NButton } from 'naive-ui';
+import { CopyOutline, RefreshOutline } from '@vicons/ionicons5';
+import { NAvatar, NButton, NIcon } from 'naive-ui';
 import { computed } from 'vue';
 
 
 
 interface MessageItemProps {
   message:ChatMessage
+  canRegenerate:boolean
+  isRegenerating:boolean
 }
+
+const emit =defineEmits<{
+  regenerate:[]
+}>()
 
 const props = defineProps<MessageItemProps>()
 

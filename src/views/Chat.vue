@@ -25,7 +25,7 @@
     <section class="chat-main">
       <header class="chat-header">{{ chatStore.activeSession?.title ?? 'AI 聊天' }}</header>
       <div v-if="chatStore.activeMessages.length" class="message-list">
-        <MessageItem v-for="message in chatStore.activeMessages" :key="message.id" :message="message" />
+        <MessageItem v-for="(message, index) in chatStore.activeMessages" :key="message.id" :message="message"  :is-regenerating="chatStore.isGenerating" :can-regenerate="message.role==='assistant'&&index===chatStore.activeMessages.length-1&&!chatStore.isGenerating" @regenerate="chatStore.regenerateLastAnswer"/>
         <NSpin v-if="chatStore.isGenerating" size="small">AI 正在思考...</NSpin>
       </div>
 

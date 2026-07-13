@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { useStorage } from '@vueuse/core'
 
 // 聊天消息发送方
 export type MessageRole = 'user' | 'assistant'
@@ -22,8 +23,8 @@ export interface ChatSession {
 }
 
 export const useChatStore = defineStore('chat', () => {
-  const sessions = ref<ChatSession[]>([])
-  const activeSessionId = ref<string | null>(null)
+  const sessions = useStorage<ChatSession[]>('sakiflow_chat_sessions', [])
+  const activeSessionId = useStorage<string | null>('sakiflow_active_chat_id', null)
   const isGenerating = ref(false)
 
   // 当前的会话
@@ -59,6 +60,36 @@ export const useChatStore = defineStore('chat', () => {
 
     if (activeSessionId.value === id) {
       activeSessionId.value = sessions.value[0]?.id ?? null
+    }
+  }
+
+  async function regenerateLastAnswer(): Promise<void> {
+    const session = activeSession.value
+    const lastMessage = session?.messages.at(-1)
+
+    if (!session || !lastMessage || lastMessage.role !== 'assistant' || isGenerating.value) return
+
+    const previousUserMessage = [...session.messages].reverse().find((msg) => msg.role === 'user')
+
+    if (!previousUserMessage) return
+    isGenerating.value = true
+
+    try {
+      session.messages.pop()
+
+      await new Promise<void>((res) => {
+        window.setTimeout(res, 600)
+      })
+      session.messages.push({
+        id: `message-${Date.now()}-assistant`,
+        role: 'assistant',
+        content: `这是对"${previousUserMessage.content}"重新生成的回复`,
+        createdAt: '刚刚',
+      })
+
+      session.updatedAt = '刚刚'
+    } finally {
+      isGenerating.value = false
     }
   }
 
@@ -104,5 +135,6 @@ export const useChatStore = defineStore('chat', () => {
     selectSession,
     deleteSession,
     sendMessage,
+    regenerateLastAnswer,
   }
 })
