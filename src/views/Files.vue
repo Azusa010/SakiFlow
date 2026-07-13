@@ -67,6 +67,18 @@
               </div>
             </div>
 
+            <div class="file-preview">
+              <h3>文件预览</h3>
+
+              <pre v-if="fileStore.selectedFile.previewKind === 'text'" class="text-preview">
+                {{ fileStore.selectedFile.previewContent }}
+              </pre>
+
+              <iframe v-else-if="fileStore.selectedFile.previewKind==='pdf'" class="pdf-preview" :src="fileStore.selectedFile.previewUrl" :title="`${fileStore.selectedFile.name} 预览`"></iframe>
+
+              <NEmpty v-else size="small" description="暂不支持预览此类型文件"> </NEmpty>
+            </div>
+
             <NButton type="primary" :loading="fileStore.selectedFile.status === 'analyzing'"
               :disabled="fileStore.selectedFile.status === 'completed'"
               @click="handleAnalyze(fileStore.selectedFile.id)">
@@ -212,5 +224,36 @@ function handleAnalyze(id: string): void {
 .analysis-result {
   margin-top: 20px;
   line-height: 1.8;
+}
+
+.file-preview {
+  margin-bottom: 20px;
+}
+
+.file-preview h3 {
+  margin: 0 0 10px;
+  color: #334155;
+  font-size: 15px;
+}
+
+.text-preview {
+  max-height: 260px;
+  margin: 0;
+  overflow: auto;
+  padding: 14px;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #334155;
+  font: 13px/1.7 Consolas, 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.pdf-preview {
+  display: block;
+  width: 100%;
+  height: 360px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
 </style>
