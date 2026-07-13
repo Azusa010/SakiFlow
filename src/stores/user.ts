@@ -37,6 +37,15 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  function updateUser(profile:Pick<UserInfo, 'nickname' |'email'>):void{
+    if(!userInfo.value) return
+    userInfo.value = {
+      ...userInfo.value,
+      ...profile
+    }
+    localStorage.setItem('sakiflow_userInfo', JSON.stringify(userInfo.value))
+  }
+
   function logout() {
     token.value = ''
     userInfo.value = null
@@ -51,5 +60,6 @@ export const useUserStore = defineStore('user', () => {
     setUser,
     logout,
     restoreUser,
+    updateUser,
   }
 })
