@@ -1,7 +1,7 @@
 <template>
-  <div class="message-row" :class="{'message-row--user' :isUser}">
-    <NAvatar round :color="isUser ? '#2563eb':'#7c3aed'">
-      {{ isUser?'我':'AI' }}
+  <div class="message-row" :class="{ 'message-row--user': isUser }">
+    <NAvatar round :color="isUser ? '#2563eb' : '#7c3aed'">
+      {{ isUser ? '我' : 'AI' }}
     </NAvatar>
 
     <div class="message-body">
@@ -9,11 +9,17 @@
 
       <div class="message-meta">
         <span>{{ message.createdAt }}</span>
-        <NButton text size="tiny" @click="copyMessage"><NIcon><CopyOutline /></NIcon></NButton>
+        <NButton text size="tiny" @click="copyMessage">
+          <NIcon>
+            <CopyOutline />
+          </NIcon>
+        </NButton>
 
-        <NButton v-if="canRegenerate" text size="tiny" :disabled="isRegenerating" @click="emit('regenerate')"><NIcon>
-          <RefreshOutline />
-        </NIcon></NButton>
+        <NButton v-if="canRegenerate" text size="tiny" :disabled="isRegenerating" @click="emit('regenerate')">
+          <NIcon>
+            <RefreshOutline />
+          </NIcon>
+        </NButton>
       </div>
     </div>
 
@@ -31,24 +37,24 @@ import { computed } from 'vue';
 
 
 interface MessageItemProps {
-  message:ChatMessage
-  canRegenerate:boolean
-  isRegenerating:boolean
+  message: ChatMessage
+  canRegenerate: boolean
+  isRegenerating: boolean
 }
 
-const emit =defineEmits<{
-  regenerate:[]
+const emit = defineEmits<{
+  regenerate: []
 }>()
 
 const props = defineProps<MessageItemProps>()
 
-const isUser = computed(()=>props.message.role === 'user')
+const isUser = computed(() => props.message.role === 'user')
 
 // 将当前消息内容复制到系统剪贴板
-async function copyMessage():Promise<void>{
-  try{
+async function copyMessage(): Promise<void> {
+  try {
     await navigator.clipboard.writeText(props.message.content)
-  }catch{
+  } catch {
 
   }
 }
