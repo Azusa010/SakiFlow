@@ -13,6 +13,19 @@
       </NGridItem>
     </NGrid>
 
+    <NCard title="快捷入口">
+      <div class="quick-actions">
+        <NButton type="primary" @click="handleQuickEntry('/workflow')">创建工作流</NButton>
+        <NButton @click="handleQuickEntry('/chat')">开始 AI 对话</NButton>
+        <NButton @click="handleQuickEntry('/files')">上传文件</NButton>
+        <NButton @click="handleQuickEntry('/editor')">打开编辑器</NButton>
+      </div>
+    </NCard>
+
+    <NCard title="近 7 天 AI 使用趋势">
+      <ChartPanel :labels="trendLabels" :values="trendValues" series-name="AI 调用次数" />
+    </NCard>
+
     <NCard title="最近任务" class="recent-task-card">
       <NList hoverable>
         <NListItem v-for="task in recentTasks" :key="task.title">
@@ -34,8 +47,9 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useUserStore } from "@/stores/user";
-import { NCard, NGrid, NGridItem, NList, NListItem, NStatistic, NTag } from "naive-ui";
-
+import { NButton, NCard, NGrid, NGridItem, NList, NListItem, NStatistic, NTag } from "naive-ui";
+import { useRouter } from "vue-router";
+import ChartPanel from "@/components/ChartPanel.vue";
 // 统计指标
 interface DashboardMetric {
   label: string;
@@ -51,6 +65,10 @@ interface RecentTask {
   status: '进行中' | '已完成'
 }
 
+const router = useRouter()
+function handleQuickEntry(path: string): void {
+  void router.push(path)
+}
 
 const userStore = useUserStore()
 
@@ -63,6 +81,10 @@ const metrics: DashboardMetric[] = [
   { label: '已分析文件', value: '24', description: '本月累计上传' },
   { label: 'Token 消耗', value: '86.5K', description: '本月累计消耗' },
 ]
+
+// Dashboard 最近七天 AI 调用趋势演示数据
+const trendLabels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+const trendValues = [12, 18, 14, 21, 16, 25, 30]
 
 const recentTasks: RecentTask[] = [
   {
@@ -138,5 +160,11 @@ const recentTasks: RecentTask[] = [
   margin-top: 6px;
   color: var(--text-muted);
   font-size: 13px;
+}
+
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 </style>
